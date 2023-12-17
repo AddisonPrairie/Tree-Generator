@@ -1,0 +1,54 @@
+<html>
+    <head>
+        <title>WASM | Tree Generator</title>
+        <style>
+            body {
+                margin: 0px;
+                padding: 0px;
+                width: 100%;
+                height: 100%;
+            }
+        </style>
+    </head>
+    <body>
+        <div style="position: absolute; z-index: 5;">
+            <button id="step">step</button>
+            <button id="record">start recording</button>
+        </div>
+        <canvas id="canvas" style="width: 750px; height: 750px;"></canvas>
+
+        <script src="js/glMatrix/gl-matrix-min.js"></script>
+        <script src="js/render/renderer.js" type="module"></script>
+        <script src="js/render/orbit.js" type="module"></script>
+        <script src="js/main.js" type="module"></script>
+        <script type="module">
+            import { initApp } from "./js/main.js";
+
+            window.initApp = initApp;
+        </script>
+        <script>
+
+            let bLoaded = false;
+
+            var Module = {
+                onRuntimeInitialized: function() {
+                    console.log("WASM module loaded");
+                    bLoaded = true;
+                }
+            };
+
+            document.addEventListener("DOMContentLoaded", function() {
+                function checkInit() {
+                    if (bLoaded) {
+                        window.initApp(Module);
+                    } else {
+                        setTimeout(checkInit, 10);
+                    }
+                }
+
+                checkInit();
+            });
+        </script>
+        <script src="wasm.js"></script>
+    </body>
+</html>
