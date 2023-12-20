@@ -21,38 +21,23 @@ export function initApp(Module) {
     //set the variable cpp parameters - shadow behavior, tropism, etc.
 
     /*
-    
-    const SHADOW_Q_MAX = 10;
-    const SHADOW_A = 1.25;
-    const SHADOW_B = 1.9;
-    const SHADOW_C = 4.;
-    const TROPISM_DIR_X = 0.;
-    const TROPISM_DIR_Y = 0.;
-    const TROPISM_DIR_Z = 1.;
-    const TROPISM_ETA = 1.;
-    const TREE_ETA = 5.;
-    const LIGHT_ETA = 1.;
-    const ENERGY_ALPHA = 1.;
-    const ENERGY_LAMBDA = .54;
-    const PRUNE_RATIO = .25;
-    const BRANCHING_ANGLE_FACTOR = 1.;
 
     GOOD BONSAI LIKE:
 
-    const SHADOW_Q_MAX = 10;
-    const SHADOW_A = 1.;
-    const SHADOW_B = 1.5;
-    const SHADOW_C = 4.;
+    const SHADOW_Q_MAX = 18;
+    const SHADOW_A = .5;
+    const SHADOW_B = 1.25;
+    const SHADOW_C = 3.;
     const TROPISM_DIR_X = 0.;
     const TROPISM_DIR_Y = 0.;
     const TROPISM_DIR_Z = 1.;
-    const TROPISM_ETA = -2.;
-    const TREE_ETA = 7.;
-    const LIGHT_ETA = 5.;
+    const TROPISM_ETA = -1.;
+    const TREE_ETA = 10.;
+    const LIGHT_ETA = 7.;
     const ENERGY_ALPHA = 2.;
-    const ENERGY_LAMBDA = .5;
-    const PRUNE_RATIO = .5;
-    const BRANCHING_ANGLE_FACTOR = .5;
+    const ENERGY_LAMBDA = .54;
+    const PRUNE_RATIO = .48;
+    const BRANCHING_ANGLE_FACTOR = 0.;
 
     const BRANCH_LENGTH = 1.;
     const SHADOW_RADIUS_FACTOR = 1;
@@ -80,19 +65,19 @@ export function initApp(Module) {
     */
 
     const SHADOW_Q_MAX = 18;
-    const SHADOW_A = 2.;
-    const SHADOW_B = 1.4;
-    const SHADOW_C = 4.;
+    const SHADOW_A = .5;
+    const SHADOW_B = 1.25;
+    const SHADOW_C = 3.;
     const TROPISM_DIR_X = 0.;
     const TROPISM_DIR_Y = 0.;
     const TROPISM_DIR_Z = 1.;
-    const TROPISM_ETA = -3.;
+    const TROPISM_ETA = -1.;
     const TREE_ETA = 10.;
-    const LIGHT_ETA = 6.;
+    const LIGHT_ETA = 7.;
     const ENERGY_ALPHA = 2.;
-    const ENERGY_LAMBDA = .5;
-    const PRUNE_RATIO = .1;
-    const BRANCHING_ANGLE_FACTOR = .5;
+    const ENERGY_LAMBDA = .54;
+    const PRUNE_RATIO = .48;
+    const BRANCHING_ANGLE_FACTOR = 0.;
 
     const BRANCH_LENGTH = 1.;
     const SHADOW_RADIUS_FACTOR = 1;

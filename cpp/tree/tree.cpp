@@ -29,8 +29,6 @@ Tree::Tree(TreeSettings settings) {
     _rootNode->_bHasBud = false;
     
     new Node(TERMINAL, _rootNode, vec3f(0.f, 0.f, 1.1f));
-
-    //_growShoot(TERMINAL, _rootNode->_terminalNode, vec3f(0.f, 0.f, 1.f), 5.f);
 }
 
 void Tree::setSettings(TreeSettings settings) {
@@ -113,24 +111,17 @@ void Tree::render(DrawingInfo& drawingInfo) {
 
 void Tree::_addNodeToRender(Node* node, DrawingInfo& drawingInfo) {
     {
-        float c0;
-        float c1;
-
-        if (node->_preNode) {
-            c0 = node->_preNode->_bHasBud ? 1.f : 0.f;
-        } else {
-            c0 = 0.f;
-        }
-
-        c1 = node->_bHasBud ? 1.f : 0.f;
+        float c0 = node->_preNode->_bHasBud ? 1.f : 0.f;
+        float c1 = node->_bHasBud ? 1.f : 0.f;
 
         drawingInfo.addLine(
             node->_preNode->_position,
-            vec3f(c0),
+            vec3f(58.f / 255.f, 95.f / 255.f, 11.f / 255.f) * 2.f * c0,
+            //vec3f(0., c0 * .5, 0.),
             node->_position,
-            vec3f(c1)
+            vec3f(58.f / 255.f, 95.f / 255.f, 11.f / 255.f) * 2.f * c1
+            //vec3f(0., c1 * .5, 0.)
         );
-
     }
     {
         vec3f up;
@@ -145,7 +136,7 @@ void Tree::_addNodeToRender(Node* node, DrawingInfo& drawingInfo) {
 
         basis(up, o1, o2);
 
-        const int numPoints = 12;
+        const int numPoints = 6;
 
         float lastR = (float) (numPoints - 1) / (float) numPoints * 2.f * 3.1415f;
 
@@ -161,10 +152,10 @@ void Tree::_addNodeToRender(Node* node, DrawingInfo& drawingInfo) {
             vec3f wPos = node->_position + world(lPos, o1, o2, up);
 
             drawingInfo.addLine(
-                lastPos,
-                vec3f(0., 1., 0.),
-                wPos,
-                vec3f(0., 1., 0.)
+                lastPos, //vec3f(.5),
+                vec3f(150.f / 255.f, 75.f / 255.f, 0.f) * .5,
+                wPos, //vec3f(.5)
+                vec3f(150.f / 255.f, 75.f / 255.f, 0.f) * .5
             );
 
             lastPos = wPos;

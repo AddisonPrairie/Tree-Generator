@@ -3,19 +3,6 @@
 
 #pragma once
 
-/*
-struct TreeSettings {
-    struct {
-        int X_SIZE;
-        int Y_SIZE;
-        int Z_SIZE;
-        int Q_MAX;
-        float a;
-        float b;
-    } shadowMap;
-};
-*/
-
 struct TreeSettings {
     int SHADOW_MAP_SIZE_X;
     int SHADOW_MAP_SIZE_Y;
@@ -61,7 +48,6 @@ class Tree {
         void _addNodeShadow(Node* node);
         void _removeNodeShadow(Node* node);
 
-        //Node* _createNode(Node* parent, vec3f position);
         void _deleteNode(Node*& node);
 
         void _growNode(Node* node);
@@ -71,9 +57,6 @@ class Tree {
 
         float _accumulateLight(Node* node);
         void  _passEnergy(Node* node);
-
-        //void _growNodes();
-        //void _possiblyPruneNode(Node*& node);
 
         void _addNodeToRender(Node* node, class DrawingInfo& drawingInfo);
 };

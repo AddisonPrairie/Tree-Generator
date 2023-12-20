@@ -8,8 +8,8 @@ export class Renderer {
 
         const renderer = this;
         new ResizeObserver(() => {
-            renderer.canvas.width = renderer.canvas.clientWidth;
-            renderer.canvas.height = renderer.canvas.clientHeight;
+            renderer.canvas.width = renderer.canvas.clientWidth * 1.25;
+            renderer.canvas.height = renderer.canvas.clientHeight * 1.25;
 
             renderer.computeCameraMatrix();
         }).observe(this.canvas);

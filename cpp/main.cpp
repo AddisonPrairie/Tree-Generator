@@ -7,10 +7,7 @@
 #include "tree/tree.h"
 
 /*
-
 compile with:
-    em++ cpp/main.cpp cpp/tree/tree.cpp cpp/vec/vec.cpp -o wasm.js -s EXPORTED_RUNTIME_METHODS=['ccall'] -s WASM=1 -s EXPORTED_FUNCTIONS=['_init','_testMesh'] -s TOTAL_MEMORY=512MB
-
     em++ cpp/main.cpp cpp/tree/tree.cpp cpp/vec/vec.cpp cpp/tree/node.cpp -o wasm.js -s EXPORTED_RUNTIME_METHODS=['ccall'] -s WASM=1 -s EXPORTED_FUNCTIONS=['_init','_getTreeMesh','_step','_setSettings'] -s ALLOW_MEMORY_GROWTH=1 -O3
 */
 
