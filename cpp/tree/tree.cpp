@@ -1,5 +1,5 @@
 #include "tree.h"
-#include "components.h"
+#include "node.h"
 #include "../render/drawinginfo.h"
 
 #include <stdio.h>
@@ -9,28 +9,42 @@ Tree::Tree(TreeSettings settings) {
     _settings = settings;
 
     //allocate shadow map
-    _shadowMap = new float**[_settings.shadowMap.X_SIZE];
-    for (int x = 0; x < _settings.shadowMap.X_SIZE; x++) {
-        _shadowMap[x] = new float*[_settings.shadowMap.Y_SIZE];
-        for (int y = 0; y < _settings.shadowMap.Y_SIZE; y++) {
-            _shadowMap[x][y] = new float[_settings.shadowMap.Z_SIZE];
-            for (int z = 0; z < _settings.shadowMap.Z_SIZE; z++) {
-                _shadowMap[x][y][z] = 0.;//1. - (float) z / (float) _settings.shadowMap.Z_SIZE;
+    _shadowMap = new float**[_settings.SHADOW_MAP_SIZE_X];
+    for (int x = 0; x < _settings.SHADOW_MAP_SIZE_X; x++) {
+        _shadowMap[x] = new float*[_settings.SHADOW_MAP_SIZE_Y];
+        for (int y = 0; y < _settings.SHADOW_MAP_SIZE_Y; y++) {
+            _shadowMap[x][y] = new float[_settings.SHADOW_MAP_SIZE_Z];
+            for (int z = 0; z < _settings.SHADOW_MAP_SIZE_Z; z++) {
+                _shadowMap[x][y][z] = 0.;
             }
         }
     }
 
     //create first two nodes
-    float midX = (float) _settings.shadowMap.X_SIZE / 2.f;
-    float midY = (float) _settings.shadowMap.Y_SIZE / 2.f;
+    float midX = (float) _settings.SHADOW_MAP_SIZE_X / 2.f;
+    float midY = (float) _settings.SHADOW_MAP_SIZE_Y / 2.f;
 
-    _rootNode = new Node({midX, midY, 0.f}); _rootNode->_bHasBud = false;
-    _rootNode->_mNode = _createNode(_rootNode, {midX, midY, 1.1f});
+    _rootNode = new Node();
+    _rootNode->_position = vec3f(midX, midY, 0.f);
+    _rootNode->_bHasBud = false;
+    
+    new Node(TERMINAL, _rootNode, vec3f(0.f, 0.f, 1.1f));
+
+    //_growShoot(TERMINAL, _rootNode->_terminalNode, vec3f(0.f, 0.f, 1.f), 5.f);
+}
+
+void Tree::setSettings(TreeSettings settings) {
+    //does not let the user change the size of the shadow map
+    settings.SHADOW_MAP_SIZE_X = _settings.SHADOW_MAP_SIZE_X;
+    settings.SHADOW_MAP_SIZE_Y = _settings.SHADOW_MAP_SIZE_Y;
+    settings.SHADOW_MAP_SIZE_Z = _settings.SHADOW_MAP_SIZE_Z;
+
+    _settings = settings;
 }
 
 Tree::~Tree() {
-    for (int x = 0; x < _settings.shadowMap.X_SIZE; x++) {
-        for (int y = 0; y < _settings.shadowMap.Y_SIZE; y++) {
+    for (int x = 0; x < _settings.SHADOW_MAP_SIZE_X; x++) {
+        for (int y = 0; y < _settings.SHADOW_MAP_SIZE_Y; y++) {
             delete _shadowMap[x][y];
         }
         delete _shadowMap[x];
@@ -39,23 +53,40 @@ Tree::~Tree() {
 }
 
 void Tree::step() {
-    _growNodes();
+    if (!_rootNode->_terminalNode) return;
 
-    if (_season++ % 1 == 0) {
-        _possiblyPruneNode(_rootNode);
-    }
+    _rootNode->_terminalEnergy = 1.f * _accumulateLight(_rootNode->_terminalNode);
+
+    _passEnergy(_rootNode->_terminalNode);
+
+    _rootNode->calculateChildren();
+
+    return;
 }
 
 void Tree::render(DrawingInfo& drawingInfo) {
-    _addNodeToRender(_rootNode->_mNode, drawingInfo);
+    PointerStack stack(512);
 
-    printf("num internodes: %i\n", drawingInfo.getDrawingInfo()[0]);
+    _rootNode->_terminalNode->calculateRadius();
+
+    stack.push(_rootNode->_terminalNode);
+
+    while (!stack.isEmpty()) {
+        Node* current = (Node*) stack.pop();
+
+        if (current == nullptr) continue;
+
+        if (current->_axillaryNode) stack.push(current->_axillaryNode);
+        if (current->_terminalNode) stack.push(current->_terminalNode);
+
+        _addNodeToRender(current, drawingInfo);
+    }
 
     return;
-
-    for (int x = 0; x < _settings.shadowMap.X_SIZE; x++) {
-        for (int y = 0; y < _settings.shadowMap.Y_SIZE; y++) {
-            for (int z = 0; z < _settings.shadowMap.Z_SIZE; z++) {
+    
+    for (int x = 0; x < _settings.SHADOW_MAP_SIZE_X; x++) {
+        for (int y = 0; y < _settings.SHADOW_MAP_SIZE_Y; y++) {
+            for (int z = 0; z < _settings.SHADOW_MAP_SIZE_Z; z++) {
                 if (_shadowMap[x][y][z] > 2.) {
                     vec3f center = vec3f(x + .5f, y + .5f, z + .5f);
                     float r = (_shadowMap[x][y][z] - 2.) / 16.;
@@ -81,221 +112,394 @@ void Tree::render(DrawingInfo& drawingInfo) {
 };
 
 void Tree::_addNodeToRender(Node* node, DrawingInfo& drawingInfo) {
+    {
+        float c0;
+        float c1;
+
+        if (node->_preNode) {
+            c0 = node->_preNode->_bHasBud ? 1.f : 0.f;
+        } else {
+            c0 = 0.f;
+        }
+
+        c1 = node->_bHasBud ? 1.f : 0.f;
+
+        drawingInfo.addLine(
+            node->_preNode->_position,
+            vec3f(c0),
+            node->_position,
+            vec3f(c1)
+        );
+
+    }
+    {
+        vec3f up;
+
+        if (node->_terminalNode) {
+            up = normalize((node->_terminalNode->mainDirection() + node->mainDirection()));
+        } else {
+            up = node->mainDirection();
+        }
+
+        vec3f o1, o2;
+
+        basis(up, o1, o2);
+
+        const int numPoints = 12;
+
+        float lastR = (float) (numPoints - 1) / (float) numPoints * 2.f * 3.1415f;
+
+        float radius = node->radius;
+
+        vec3f lastPos = node->_position + world(vec3f(cos(lastR) * radius, sin(lastR) * radius, 0.f), o1, o2, up);
+
+        for (int i = 0; i < numPoints; i++) {
+            float r = (float) i / (float) numPoints * 2.f * 3.1415f;
+
+            vec3f lPos = {cos(r) * radius, sin(r) * radius, 0.};
+
+            vec3f wPos = node->_position + world(lPos, o1, o2, up);
+
+            drawingInfo.addLine(
+                lastPos,
+                vec3f(0., 1., 0.),
+                wPos,
+                vec3f(0., 1., 0.)
+            );
+
+            lastPos = wPos;
+        }  
+    }
+}
+
+float Tree::_accumulateLight(Node* node) {
+    if (node == nullptr) return 0.f;
+
+    node->_axillaryEnergy = 0.f;
+    node->_terminalEnergy = 0.f;
+
+    if (node->_terminalNode) {
+        node->_terminalEnergy = _accumulateLight(node->_terminalNode);
+
+        float energyPerNode = node->_terminalEnergy / (float) node->_terminalNode->_children;
+
+        if (energyPerNode < _settings.PRUNE_RATIO) {
+            _deleteNode(node->_terminalNode);
+        }
+    }
+    if (node->_axillaryNode) {
+        node->_axillaryEnergy = _accumulateLight(node->_axillaryNode);
+
+        float energyPerNode = node->_axillaryEnergy / (float) node->_axillaryNode->_children;
+
+        if (energyPerNode < _settings.PRUNE_RATIO) {
+            _deleteNode(node->_axillaryNode);
+        }
+    }
+
+    if (node->_bHasBud) {
+        if (!_inShadowMapBounds(node->_position.x, node->_position.y, node->_position.z)) {
+            return 0.f;
+        };
+
+        float light = _settings.SHADOW_C - _shadowMap[(int)node->_position.x][(int)node->_position.y][(int)node->_position.z] + _settings.SHADOW_A;
+
+        if (light < 0.f) light = 0.f;
+
+        if (!node->_terminalNode) {
+            node->_terminalEnergy += light;
+        } else
+        if (!node->_axillaryNode) {
+            node->_axillaryEnergy += light;
+        }
+    }
+
+    return node->_axillaryEnergy + node->_terminalEnergy;
+}
+
+void Tree::_passEnergy(Node* node) {
     if (node == nullptr) return;
 
-    drawingInfo.addLine(node->_pNode->_pos, vec3f(1., 1., 1.), node->_pos, vec3f(1., 1., 1.));
+    const float lambda = _settings.ENERGY_LAMBDA;
 
-    _addNodeToRender(node->_lNode, drawingInfo);
-    _addNodeToRender(node->_mNode, drawingInfo);
+    const float axillaryCoefficient = node->_axillaryEnergy * (1.f - lambda);
+    const float terminalCoefficient = node->_terminalEnergy * lambda;
+
+    const float denominator = 1.f / (axillaryCoefficient + terminalCoefficient);
+
+    float incomingEnergy = 0.f;
+
+    //see from which source this branch will be receiving its energy
+    if (node->_preNode->_axillaryNode == node) {
+        incomingEnergy = node->_preNode->_axillaryEnergy;
+    } else {
+        incomingEnergy = node->_preNode->_terminalEnergy;
+    }
+
+    node->_axillaryEnergy = axillaryCoefficient * incomingEnergy * denominator;
+    node->_terminalEnergy = terminalCoefficient * incomingEnergy * denominator;
+
+    if (axillaryCoefficient == terminalCoefficient && axillaryCoefficient == 0) {
+        node->_axillaryEnergy = 0.f;
+        node->_terminalEnergy = 0.f;
+        
+        return;
+    }
+
+    if (node->_terminalNode) {
+        _passEnergy(node->_terminalNode);
+    }
+
+    if (node->_axillaryNode) {
+        _passEnergy(node->_axillaryNode);
+    }
+
+    _growNode(node);
 }
 
 float randf() {
     return (float) rand() / (float) RAND_MAX;
 }
 
-void Tree::_growNodes() {
-    PointerStack stack(32);
+void Tree::_growNode(Node* node) {
+    if (node == nullptr) return;
 
-    stack.push(_rootNode);
+    //if this node does not have a bud, it cannot grow anymore
+    if (!node->_bHasBud) return;
 
-    while (!stack.isEmpty()) {
-        Node* cur = (Node*) stack.pop();
+    int x = node->_position.x;
+    int y = node->_position.y;
+    int z = node->_position.z;
 
-        if (cur->_mNode) stack.push(cur->_mNode);
-        if (cur->_lNode) stack.push(cur->_lNode);
+    if (!_inShadowMapBounds(x, y, z)) return;
 
-        if (cur->_bHasBud == false) continue;
+    GrowthType type;
 
-        int x = cur->_pos.x;
-        int y = cur->_pos.y;
-        int z = cur->_pos.z;
+    if (node->_terminalNode) {
+        type = AXILLARY;
+    } else {
+        type = TERMINAL;
+    }
 
-        if (!_inShadowMapBounds(x, y, z)) continue;
+    float energy = type == AXILLARY ? node->_axillaryEnergy : node->_terminalEnergy;
 
-        float exposure = 4. - _shadowMap[x][y][z] + _settings.shadowMap.a;
-
-        if (exposure < 1.) {
-            cur->_bHasBud = false;
-            continue;
+    if (energy < 1.f) {
+        if (energy < .1f) {
+            node->_bHasBud = false;
         }
+        return;
+    }
 
-        int DIR[26][3] = {
-            {-1, -1, -1},
-            { 0, -1, -1},
-            { 1, -1, -1},
-            {-1,  0, -1},
-            { 0,  0, -1},
-            { 1,  0, -1},
-            {-1,  1, -1},
-            { 0,  1, -1},
-            { 1,  1, -1},
+    vec3f treeDirection;
 
-            {-1, -1,  0},
-            { 0, -1,  0},
-            { 1, -1,  0},
-            {-1,  0,  0},
-            { 1,  0,  0},
-            {-1,  1,  0},
-            { 0,  1,  0},
-            { 1,  1,  0},
+    const float branchingAngle = _settings.BRANCHING_ANGLE_FACTOR;
 
-            {-1, -1,  1},
-            { 0, -1,  1},
-            { 1, -1,  1},
-            {-1,  0,  1},
-            { 0,  0,  1},
-            { 1,  0,  1},
-            {-1,  1,  1},
-            { 0,  1,  1},
-            { 1,  1,  1},
-        };
+    //generate a random sample in the disc about the branch main direction,
+    //then shift it towards the forward direction of the branch
+    if (type == AXILLARY) {
+        float r = randf() * 2.f * 3.1415f;
 
-        unsigned long bValid = 0x0;
+        vec3f localDir = {cos(r), sin(r), 0.};
+
+        localDir = normalize(localDir + vec3f(0., 0., branchingAngle));
+
+        vec3f up = node->mainDirection();
+
+        vec3f o1, o2;
+        basis(up, o1, o2);
+        treeDirection = world(localDir, o1, o2, up);
+
+        node->_bHasBud = false;
+    } 
+    //otherwise, the tree just continues growing in the same direction
+    else {
+        treeDirection = node->mainDirection();
+    }
+
+    _growShoot(type, node, treeDirection, energy);
+}
+
+//based on the energy a bud receives, grow a number of new nodes in the designated direction
+void Tree::_growShoot(GrowthType type, Node* node, vec3f direction, float energy) {
+    
+    if (energy > 30.f) {
+        energy = 30.f; //NOTE: come back to this... not sure how a single bud can get so much
+    }
+
+    int numNodes = (int) energy;
+
+    float nodeLength = energy / (float) numNodes;
+
+    const float lightEta = _settings.LIGHT_ETA;
+    const float tropismEta = _settings.TROPISM_ETA;
+    const vec3f tropismDirection = 
+        vec3f(
+            _settings.TROPISM_DIR_X, _settings.TROPISM_DIR_Y, _settings.TROPISM_DIR_Z
+        );
+    const float treeEta = _settings.TREE_ETA;
+
+    for (int i = 0; i < numNodes; i++) {
+        direction = normalize(
+                direction * treeEta + 
+                _getOptimalLightDirection(
+                    node->_position.x, 
+                    node->_position.y, 
+                    node->_position.z) * lightEta + 
+                tropismDirection * tropismEta) * nodeLength * _settings.BRANCH_LENGTH;
         
-        float least = 1e30f;
+        if (!_inShadowMapBounds(
+            node->_position.x + (int) direction.x,
+            node->_position.y + (int) direction.y,
+            node->_position.z + (int) direction.z)) break;
 
-        int numValid = 0;
-        for (int i = 0; i < 26; i++) {
-            const int xx = x + DIR[i][0];
-            const int yy = y + DIR[i][1];
-            const int zz = z + DIR[i][2];
+        node = new Node(type, node, direction);
 
-            if (_inShadowMapBounds(xx, yy, zz)) {
-                if (_shadowMap[xx][yy][zz] < least) {
-                    least = _shadowMap[xx][yy][zz];
-                    bValid = 0x1 << i;
-                    numValid = 1;
-                } else if (_shadowMap[xx][yy][zz] == least) {
-                    bValid |= 0x1 << i;
-                    numValid++;
-                }
-            }
-        }
+        _addNodeShadow(node);
 
-        int rIndex = rand() % numValid;
-        for (int i = 0; i < 26; i++) {
-            if (bValid & (0x1 << i)) {
-                if (rIndex == 0) {
-                    rIndex = i;
-                    break;
-                }
-                rIndex--;
-            }
-        }
-
-        vec3f lightDirection = normalize(
-            vec3f((float) DIR[rIndex][0], (float) DIR[rIndex][1], (float) DIR[rIndex][2])
-        );
-
-        Node** toSet = nullptr;
-
-        vec3f treeDirection;
-
-        if (!cur->_mNode) {
-            toSet = &cur->_mNode;
-
-            treeDirection = normalize(cur->mainDirection());
-        } else {
-            toSet = &cur->_lNode;
-
-            float r = randf() * 2.f * 3.1415f;
-            float r2= randf() * 3.1415f * .5f * .1;
-
-            vec3f localDir = {cos(r) * cos(r2), sin(r) * cos(r2), sin(r2)};
-
-            localDir = normalize(localDir + vec3f(0., 0., 1.) * 1.f);
-
-            vec3f o1, o2;
-            basis(normalize(cur->mainDirection()), o1, o2);
-            treeDirection = world(localDir, o1, o2, normalize(cur->mainDirection()));
-
-            cur->_bHasBud = false;
-        }
-
-        *toSet = _createNode(
-            cur,
-            cur->_pos + normalize(
-                lightDirection * 1. + 
-                treeDirection * 10. + 
-                vec3f(0., 0., 1.) * -1.f
-            )
-        );
+        type = TERMINAL;
     }
 }
 
-void Tree::_possiblyPruneNode(Node*& node) {
-    if (node == nullptr) return;
+//possible directions look up table for determining optimal direction
+//to grow towards
+int DIR[26][3] = {
+    {-1, -1, -1},
+    { 0, -1, -1},
+    { 1, -1, -1},
+    {-1,  0, -1},
+    { 0,  0, -1},
+    { 1,  0, -1},
+    {-1,  1, -1},
+    { 0,  1, -1},
+    { 1,  1, -1},
 
-    if (node->_lNode) {
-        _possiblyPruneNode(node->_lNode);
+    {-1, -1,  0},
+    { 0, -1,  0},
+    { 1, -1,  0},
+    {-1,  0,  0},
+    { 1,  0,  0},
+    {-1,  1,  0},
+    { 0,  1,  0},
+    { 1,  1,  0},
+
+    {-1, -1,  1},
+    { 0, -1,  1},
+    { 1, -1,  1},
+    {-1,  0,  1},
+    { 0,  0,  1},
+    { 1,  0,  1},
+    {-1,  1,  1},
+    { 0,  1,  1},
+    { 1,  1,  1},
+};
+
+vec3f Tree::_getOptimalLightDirection(int x, int y, int z) {
+    unsigned long bValid = 0x0;
+        
+    float least = 1e30f;
+
+    int numValid = 0;
+    for (int i = 0; i < 26; i++) {
+        const int xx = x + DIR[i][0];
+        const int yy = y + DIR[i][1];
+        const int zz = z + DIR[i][2];
+
+        if (_inShadowMapBounds(xx, yy, zz)) {
+            if (_shadowMap[xx][yy][zz] < least) {
+                least = _shadowMap[xx][yy][zz];
+                bValid = 0x1 << i;
+                numValid = 1;
+            } else if (_shadowMap[xx][yy][zz] == least) {
+                bValid |= 0x1 << i;
+                numValid++;
+            }
+        }
     }
-    if (node->_mNode) {
-        _possiblyPruneNode(node->_mNode);
+
+    int rIndex = rand() % numValid;
+    for (int i = 0; i < 26; i++) {
+        if (bValid & (0x1 << i)) {
+            if (rIndex == 0) {
+                rIndex = i;
+                break;
+            }
+            rIndex--;
+        }
     }
 
-    if (node->_bHasBud) return;
-
-    bool bPruneM = node->_mNode == nullptr;
-    bool bPruneL = node->_lNode == nullptr;
-
-    if (bPruneL && bPruneM) {
-        _deleteNode(node);
-    }
+    return normalize(
+        vec3f((float) DIR[rIndex][0], (float) DIR[rIndex][1], (float) DIR[rIndex][2])
+    );
 }
 
 bool Tree::_inShadowMapBounds(int x, int y, int z) {
     return 
-        x >= 0 && x < _settings.shadowMap.X_SIZE &&
-        y >= 0 && y < _settings.shadowMap.Y_SIZE &&
-        z >= 0 && z < _settings.shadowMap.Z_SIZE;
+        x >= 0 && x < _settings.SHADOW_MAP_SIZE_X &&
+        y >= 0 && y < _settings.SHADOW_MAP_SIZE_Y &&
+        z >= 0 && z < _settings.SHADOW_MAP_SIZE_Z;
 }
 
 void Tree::_addNodeShadow(Node* node) {
     if (node == nullptr) return;
 
-    for (int q = 0; q < _settings.shadowMap.Q_MAX; q++) {
-        for (int i = -q; i < q + 1; i++) {
-            for (int j = -q; j < q + 1; j++) {
-                int x = node->_pos.x + i;
-                int y = node->_pos.y + j;
-                int z = node->_pos.z - q;
+    for (int q = 0; q < _settings.SHADOW_Q_MAX; q++) {
+
+        int r = q / _settings.SHADOW_RADIUS_FACTOR;
+
+        for (int i = -r; i < r + 1; i++) {
+            for (int j = -r; j < r + 1; j++) {
+                int x = node->_position.x + i;
+                int y = node->_position.y + j;
+                int z = node->_position.z - q;
+
+                float amt = _settings.SHADOW_A * pow(_settings.SHADOW_B, (float) -q);
+
+                if (amt < .01f) goto endloop;
 
                 if (_inShadowMapBounds(x, y, z)) {
-                    _shadowMap[x][y][z] += _settings.shadowMap.a * pow(_settings.shadowMap.b, (float) -q);
+                    _shadowMap[x][y][z] += amt;
                 }
             }
         }
     }
+
+endloop:
+    return;
 }
 
 void Tree::_removeNodeShadow(Node* node) {
     if (node == nullptr) return;
 
-    for (int q = 0; q < _settings.shadowMap.Q_MAX; q++) {
-        for (int i = -q; i < q + 1; i++) {
-            for (int j = -q; j < q + 1; j++) {
-                int x = node->_pos.x + i;
-                int y = node->_pos.y + j;
-                int z = node->_pos.z - q;
+    for (int q = 0; q < _settings.SHADOW_Q_MAX; q++) {
+
+        int r = q / _settings.SHADOW_RADIUS_FACTOR;
+
+        for (int i = -r; i < r + 1; i++) {
+            for (int j = -r; j < r + 1; j++) {
+                int x = node->_position.x + i;
+                int y = node->_position.y + j;
+                int z = node->_position.z - q;
+
+                float amt = _settings.SHADOW_A * pow(_settings.SHADOW_B, (float) -q);
+
+                if (amt < .01f) goto endloop;
 
                 if (_inShadowMapBounds(x, y, z)) {
-                    _shadowMap[x][y][z] -= _settings.shadowMap.a * pow(_settings.shadowMap.b, (float) -q);
+                    _shadowMap[x][y][z] -= amt;
                 }
             }
         }
     }
-}
 
-Node* Tree::_createNode(Node* parent, vec3f position) {
-    Node* ret = new Node(parent, position);
-
-    _addNodeShadow(ret);
-
-    return ret;
+endloop:
+    return;
 }
 
 void Tree::_deleteNode(Node*& node) {
     if (node == nullptr) return;
+
+    _deleteNode(node->_axillaryNode);
+    _deleteNode(node->_terminalNode);
 
     _removeNodeShadow(node);
 

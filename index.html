@@ -11,11 +11,14 @@
         </style>
     </head>
     <body>
-        <div style="position: absolute; z-index: 5;">
-            <button id="step">step</button>
-            <button id="record">start recording</button>
+        <div style="width: fit-content; margin: auto auto; position: relative;">
+            <div style="position: absolute; z-index: 5;">
+                <button id="step">step</button>
+                <button id="record">start recording</button>
+            </div>
+            <canvas id="canvas" style="width: 800px; height: 800px;"></canvas>
         </div>
-        <canvas id="canvas" style="width: 750px; height: 750px;"></canvas>
+        
 
         <script src="js/glMatrix/gl-matrix-min.js"></script>
         <script src="js/render/renderer.js" type="module"></script>

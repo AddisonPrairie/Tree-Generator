@@ -2,6 +2,8 @@
 
 #include "../vec/vec.h"
 
+#include <stdio.h>
+
 class DrawingInfo {
     public: 
         DrawingInfo() {

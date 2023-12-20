@@ -12,6 +12,9 @@ struct Node {
 
     bool _bHasBud = true;
 
+    float _lEnergy = 0.;
+    float _mEnergy = 0.;
+
     Node(struct Node* p, vec3f pos) {
         _pNode = p; _pos = pos;
     }
@@ -25,33 +28,4 @@ struct Node {
 
         return normalize(_pos - _pNode->_pos);
     }
-};
-
-struct PointerStack {
-    void** _stack = nullptr;
-    int _size = 0;
-    int _ptr = 0;
-
-    PointerStack(int size) {
-        _size = size;
-        _stack = new void*[_size];
-    }
-
-    void push(void* ptr) {
-        if (_ptr >= _size) {
-            void** newStack = new void*[(_size *= 2)];
-
-            for (int i = 0; i < _ptr; i++) newStack[i] = _stack[i];
-
-            delete _stack; _stack = newStack;
-        }
-
-        _stack[_ptr++] = ptr;
-    }
-
-    void* pop() {
-        return _stack[--_ptr];
-    }
-
-    bool isEmpty() {return _ptr == 0;}
 };

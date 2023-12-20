@@ -5,12 +5,113 @@ export function initApp(Module) {
     const renderer = new Renderer(document.querySelector("#canvas"));
     const orbitController = new OrbitController(renderer);
 
-    orbitController.setPosition(.5, .5, 0.);
+    orbitController.setPosition(.5, .5, 0.25);
 
-    Module.ccall("init");
+    //set the constant cpp parameters - shadow map size
+
+    const SHADOW_MAP_SIZE_X = 300;
+    const SHADOW_MAP_SIZE_Y = 300;
+    const SHADOW_MAP_SIZE_Z = 600;
+
+    Module.ccall("init", 
+        null,
+        ["number", "number", "number"],
+        [SHADOW_MAP_SIZE_X, SHADOW_MAP_SIZE_Y, SHADOW_MAP_SIZE_Z]);
+    
+    //set the variable cpp parameters - shadow behavior, tropism, etc.
+
+    /*
+    
+    const SHADOW_Q_MAX = 10;
+    const SHADOW_A = 1.25;
+    const SHADOW_B = 1.9;
+    const SHADOW_C = 4.;
+    const TROPISM_DIR_X = 0.;
+    const TROPISM_DIR_Y = 0.;
+    const TROPISM_DIR_Z = 1.;
+    const TROPISM_ETA = 1.;
+    const TREE_ETA = 5.;
+    const LIGHT_ETA = 1.;
+    const ENERGY_ALPHA = 1.;
+    const ENERGY_LAMBDA = .54;
+    const PRUNE_RATIO = .25;
+    const BRANCHING_ANGLE_FACTOR = 1.;
+
+    GOOD BONSAI LIKE:
+
+    const SHADOW_Q_MAX = 10;
+    const SHADOW_A = 1.;
+    const SHADOW_B = 1.5;
+    const SHADOW_C = 4.;
+    const TROPISM_DIR_X = 0.;
+    const TROPISM_DIR_Y = 0.;
+    const TROPISM_DIR_Z = 1.;
+    const TROPISM_ETA = -2.;
+    const TREE_ETA = 7.;
+    const LIGHT_ETA = 5.;
+    const ENERGY_ALPHA = 2.;
+    const ENERGY_LAMBDA = .5;
+    const PRUNE_RATIO = .5;
+    const BRANCHING_ANGLE_FACTOR = .5;
+
+    const BRANCH_LENGTH = 1.;
+    const SHADOW_RADIUS_FACTOR = 1;
+
+    GOOD STURDY BUSH:
+
+    const SHADOW_Q_MAX = 10;
+    const SHADOW_A = .5;
+    const SHADOW_B = 1.2;
+    const SHADOW_C = 4.;
+    const TROPISM_DIR_X = 0.;
+    const TROPISM_DIR_Y = 0.;
+    const TROPISM_DIR_Z = 1.;
+    const TROPISM_ETA = -1.;
+    const TREE_ETA = 10.;
+    const LIGHT_ETA = 2.;
+    const ENERGY_ALPHA = 2.;
+    const ENERGY_LAMBDA = .5;
+    const PRUNE_RATIO = .48;
+    const BRANCHING_ANGLE_FACTOR = 1;
+
+    const BRANCH_LENGTH = 1.;
+    const SHADOW_RADIUS_FACTOR = 1;
+
+    */
+
+    const SHADOW_Q_MAX = 18;
+    const SHADOW_A = 2.;
+    const SHADOW_B = 1.4;
+    const SHADOW_C = 4.;
+    const TROPISM_DIR_X = 0.;
+    const TROPISM_DIR_Y = 0.;
+    const TROPISM_DIR_Z = 1.;
+    const TROPISM_ETA = -3.;
+    const TREE_ETA = 10.;
+    const LIGHT_ETA = 6.;
+    const ENERGY_ALPHA = 2.;
+    const ENERGY_LAMBDA = .5;
+    const PRUNE_RATIO = .1;
+    const BRANCHING_ANGLE_FACTOR = .5;
+
+    const BRANCH_LENGTH = 1.;
+    const SHADOW_RADIUS_FACTOR = 1;
+
+    Module.ccall(
+        "setSettings", 
+        null,
+        ["number", "number", "number", "number", "number", "number", "number",
+         "number", "number", "number", "number", "number", "number", "number",
+         "number", "number"],
+        [
+            SHADOW_Q_MAX, SHADOW_A, SHADOW_B, SHADOW_C, TROPISM_DIR_X, TROPISM_DIR_Y, TROPISM_DIR_Z,
+            TROPISM_ETA, TREE_ETA, LIGHT_ETA, ENERGY_ALPHA, ENERGY_LAMBDA, PRUNE_RATIO, BRANCHING_ANGLE_FACTOR,
+            BRANCH_LENGTH, SHADOW_RADIUS_FACTOR
+        ]
+    );
 
     renderer.createSet("tree");
-    renderer.transformSet("tree", "scale", [1. / 400., 1. / 400., 1. / 400.]);
+    renderer.transformSet("tree", "scale", [1. / SHADOW_MAP_SIZE_X, 1. / SHADOW_MAP_SIZE_X, 1. / SHADOW_MAP_SIZE_X]);
 
     const stepButton = document.querySelector("#step");
 
@@ -48,8 +149,10 @@ export function initApp(Module) {
     let recordedChunks = [];
 
     function startRecording() {
-        const stream = document.querySelector("#canvas").captureStream(30);
-        mediaRecorder = new MediaRecorder(stream, { mimeType: "video/webm" });
+        const stream = document.querySelector("#canvas").captureStream(60);
+        mediaRecorder = new MediaRecorder(stream, {
+            mimeType: "video/webm", codecs:"vp8"
+        });
 
         mediaRecorder.ondataavailable = function(e) {
             if (e.data.size > 0) {
@@ -83,9 +186,12 @@ export function initApp(Module) {
 
         if (!bPause) {
             Module.ccall("step");
+            renderer.pointSetFromModule("tree", Module, "getTreeMesh");
+
+            //stepButton.onclick();
         }
 
-        renderer.pointSetFromModule("tree", Module, "getTreeMesh");
+        
 
         renderer.render();
     

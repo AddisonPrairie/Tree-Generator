@@ -10,7 +10,7 @@ export class OrbitController {
             rotationSpeed: .003,
             azimuthAngle: 0.,
             zenithAngle: 0.,
-            radius: 5.,
+            radius: 1.,
             zoomSpeed: 0.005,
             position: [0., 0., 0.]
         };
