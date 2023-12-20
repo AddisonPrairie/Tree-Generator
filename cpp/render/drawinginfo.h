@@ -48,6 +48,63 @@ class DrawingInfo {
             return _root;
         }
 
+        void addBoundingBox(
+            const vec3f& min,
+            const vec3f& max,
+            const vec3f& col
+        ) {
+            addLine(
+                vec3f(min.x, min.y, min.z), col,
+                vec3f(max.x, min.y, min.z), col
+            );
+            addLine(
+                vec3f(min.x, min.y, min.z), col,
+                vec3f(min.x, min.y, max.z), col
+            );
+            addLine(
+                vec3f(max.x, min.y, max.z), col,
+                vec3f(min.x, min.y, max.z), col
+            );
+            addLine(
+                vec3f(max.x, min.y, min.z), col,
+                vec3f(max.x, min.y, max.z), col
+            );
+
+            addLine(
+                vec3f(min.x, max.y, min.z), col,
+                vec3f(max.x, max.y, min.z), col
+            );
+            addLine(
+                vec3f(min.x, max.y, min.z), col,
+                vec3f(min.x, max.y, max.z), col
+            );
+            addLine(
+                vec3f(max.x, max.y, max.z), col,
+                vec3f(min.x, max.y, max.z), col
+            );
+            addLine(
+                vec3f(max.x, max.y, min.z), col,
+                vec3f(max.x, max.y, max.z), col
+            );
+
+            addLine(
+                vec3f(min.x, min.y, min.z), col,
+                vec3f(min.x, max.y, min.z), col
+            );
+            addLine(
+                vec3f(max.x, min.y, min.z), col,
+                vec3f(max.x, max.y, min.z), col
+            );
+            addLine(
+                vec3f(max.x, min.y, max.z), col,
+                vec3f(max.x, max.y, max.z), col
+            );
+            addLine(
+                vec3f(min.x, min.y, max.z), col,
+                vec3f(min.x, max.y, max.z), col
+            );
+        };
+
     private:
         int _capacity;
         int _lines;

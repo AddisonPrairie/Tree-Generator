@@ -11,7 +11,7 @@ export function initApp(Module) {
 
     const SHADOW_MAP_SIZE_X = 300;
     const SHADOW_MAP_SIZE_Y = 300;
-    const SHADOW_MAP_SIZE_Z = 600;
+    const SHADOW_MAP_SIZE_Z = 450;
 
     Module.ccall("init", 
         null,
@@ -116,7 +116,28 @@ export function initApp(Module) {
     stepButton.onclick();
     stepButton.onclick();
 
-    const recordButton = document.querySelector("#record");
+    function frame() {
+
+        if (!bPause) {
+            Module.ccall("step");
+            renderer.pointSetFromModule("tree", Module, "getTreeMesh");
+
+            //stepButton.onclick();
+        }
+
+        
+
+        renderer.render();
+    
+        window.requestAnimationFrame(frame);
+    }
+
+    frame();
+}
+
+/*
+
+const recordButton = document.querySelector("#record");
 
     let bRecording = false;
     recordButton.onclick = () => {
@@ -167,21 +188,5 @@ export function initApp(Module) {
         recordedChunks = [];
     }
 
-    function frame() {
 
-        if (!bPause) {
-            Module.ccall("step");
-            renderer.pointSetFromModule("tree", Module, "getTreeMesh");
-
-            //stepButton.onclick();
-        }
-
-        
-
-        renderer.render();
-    
-        window.requestAnimationFrame(frame);
-    }
-
-    frame();
-}
+*/

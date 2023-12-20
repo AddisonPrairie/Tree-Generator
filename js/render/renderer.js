@@ -8,8 +8,8 @@ export class Renderer {
 
         const renderer = this;
         new ResizeObserver(() => {
-            renderer.canvas.width = renderer.canvas.clientWidth * 1.25;
-            renderer.canvas.height = renderer.canvas.clientHeight * 1.25;
+            renderer.canvas.width = renderer.canvas.clientWidth   * 1.5;
+            renderer.canvas.height = renderer.canvas.clientHeight * 1.5;
 
             renderer.computeCameraMatrix();
         }).observe(this.canvas);
@@ -57,7 +57,7 @@ export class Renderer {
     render() {
         const gl = this.gl;
 
-        gl.clearColor(0., 0., 0., 1.);
+        gl.clearColor(54. / 255., 54. / 255., 54. / 255., 1.);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.viewport(0, 0, this.canvas.width, this.canvas.height);
 

@@ -80,6 +80,15 @@ void Tree::render(DrawingInfo& drawingInfo) {
         _addNodeToRender(current, drawingInfo);
     }
 
+    drawingInfo.addBoundingBox(
+        vec3f(0.f),
+        vec3f(
+            _settings.SHADOW_MAP_SIZE_X,
+            _settings.SHADOW_MAP_SIZE_Y,
+            _settings.SHADOW_MAP_SIZE_Z),
+        vec3f(64.f / 255.f)
+    );
+
     return;
     
     for (int x = 0; x < _settings.SHADOW_MAP_SIZE_X; x++) {
@@ -116,11 +125,11 @@ void Tree::_addNodeToRender(Node* node, DrawingInfo& drawingInfo) {
 
         drawingInfo.addLine(
             node->_preNode->_position,
-            vec3f(58.f / 255.f, 95.f / 255.f, 11.f / 255.f) * 2.f * c0,
-            //vec3f(0., c0 * .5, 0.),
+            //vec3f(58.f / 255.f, 95.f / 255.f, 11.f / 255.f) * 2.f * c0,
+            vec3f(1.f),
             node->_position,
-            vec3f(58.f / 255.f, 95.f / 255.f, 11.f / 255.f) * 2.f * c1
-            //vec3f(0., c1 * .5, 0.)
+            //vec3f(58.f / 255.f, 95.f / 255.f, 11.f / 255.f) * 2.f * c1
+            vec3f(1.f)
         );
     }
     {
@@ -153,9 +162,11 @@ void Tree::_addNodeToRender(Node* node, DrawingInfo& drawingInfo) {
 
             drawingInfo.addLine(
                 lastPos, //vec3f(.5),
-                vec3f(150.f / 255.f, 75.f / 255.f, 0.f) * .5,
+                vec3f(1.),//
+                //vec3f(150.f / 255.f, 75.f / 255.f, 0.f) * .5,
                 wPos, //vec3f(.5)
-                vec3f(150.f / 255.f, 75.f / 255.f, 0.f) * .5
+                vec3f(1.)
+                //vec3f(150.f / 255.f, 75.f / 255.f, 0.f) * .5
             );
 
             lastPos = wPos;
