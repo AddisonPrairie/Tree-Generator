@@ -6,12 +6,11 @@ export class Renderer {
         this.camera = {fov: 45, position: [5., 5., 5.], lookAt: [0., 0., 0.], near: 0.01, far: 100., matrix: glMatrix.mat4.create()};
         this.computeCameraMatrix();
 
+        this.renderScale = 1.5;
+
         const renderer = this;
         new ResizeObserver(() => {
-            renderer.canvas.width = renderer.canvas.clientWidth   * 1.5;
-            renderer.canvas.height = renderer.canvas.clientHeight * 1.5;
-
-            renderer.computeCameraMatrix();
+            renderer.onRenderSizeChange();
         }).observe(this.canvas);
 
         const vs_coloredLines = `
@@ -96,6 +95,17 @@ export class Renderer {
 
             gl.deleteBuffer(vBuffer);
         }
+    }
+
+    setRenderScale(scale) {
+        this.renderScale = scale;
+    }
+
+    onRenderSizeChange() {
+        this.canvas.width = this.canvas.clientWidth   * this.renderScale;
+        this.canvas.height = this.canvas.clientHeight * this.renderScale;
+
+        this.computeCameraMatrix();
     }
 
     createSet(name) {
