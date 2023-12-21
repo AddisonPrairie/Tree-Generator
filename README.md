@@ -1,4 +1,4 @@
-# Tree Generator with Web Assembly & WebGL
+## Tree Generator with Web Assembly & WebGL
 
 See the demo [here](https://addisonprairie.github.io/Tree-Generator/)
 
