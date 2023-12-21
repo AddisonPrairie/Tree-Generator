@@ -10,6 +10,10 @@ body {
     font-size: 12px;
 }
 
+canvas {
+    z-index: -1;
+}
+
 .panel-holder {
     width: 175px;
     height: 100vh;
@@ -21,8 +25,8 @@ body {
 
 .panel {
     background-color: #222;
-    border-bottom-right-radius: 8px;
-    padding: 3px 10px;
+    border-bottom-right-radius: 6px;
+    padding: 5px 10px;
     width: 150px;
 
     border: 1px solid #444;
@@ -182,6 +186,36 @@ input[type='range'] {
   input[type='range']::-ms-fill-upper {
     background: transparent;
   }
+
+.tooltip {
+    position: relative;
+}
+
+.tooltip > .ttext {
+    border-bottom: 1px dotted #444;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    text-align: center;
+    padding: 2px 2px;
+    border-radius: 2px;
+
+    width: 209%;
+    
+
+    position: absolute;
+    z-index: 4;
+    top: 110%;
+    left: 0px;
+
+    border: 1px solid #444;
+    background-color: #333;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+}
   
   
   
