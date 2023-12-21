@@ -10,6 +10,19 @@ export async function initApp(Module) {
     const orbitController = new OrbitController(renderer);
     orbitController.setPosition(.5, .5, 0.25);
 
+    //bind start/stop button
+    const startStopButton = document.querySelector("#step");
+    let bRunning = false;
+
+    startStopButton.onclick = () => {
+        bRunning = !bRunning;
+        if (bRunning) {
+            startStopButton.textContent = "stop";
+        } else {
+            startStopButton.textContent = "start";
+        }
+    };
+
     //wrapper for WASM web worker, also prevents overlapping calls to step() and getMesh()
     const WASM = {
         worker: null,
@@ -106,6 +119,12 @@ export async function initApp(Module) {
         document.querySelector("#height").onchange();
 
         WASM.setSettings(getSettingsArguments());
+
+        if (!WASM.bStepActive) {
+            if (!bRunning) {
+                startStopButton.onclick();
+            }
+        }
     }
 
     function updateCallback() {
@@ -116,21 +135,6 @@ export async function initApp(Module) {
 
     //create initial tree
     resetCallback();
-
-    //bind start/stop button
-    const startStopButton = document.querySelector("#step");
-    let bRunning = false;
-
-    startStopButton.onclick = () => {
-        bRunning = !bRunning;
-        if (bRunning) {
-            startStopButton.textContent = "stop";
-        } else {
-            startStopButton.textContent = "start";
-        }
-    };
-
-    startStopButton.onclick();
 
     //main app loop
     function frame() {

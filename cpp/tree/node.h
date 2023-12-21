@@ -21,6 +21,7 @@ public:
     float _terminalEnergy = 0.f;
 
     bool _bHasBud = true;
+    bool _bPlaceHolder = false;
 
     //_children initialy negative to signal a need to recalculate
     int _children = -1;

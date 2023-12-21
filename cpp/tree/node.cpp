@@ -23,6 +23,8 @@ vec3f Node::mainDirection() {
 }
 
 int Node::calculateChildren() {
+    if (_bPlaceHolder) return 0;
+
     int newChildren = 0;
 
     if (_axillaryNode) {
@@ -38,6 +40,9 @@ int Node::calculateChildren() {
 }
 
 void Node::calculateRadius() {
+    //if this is just a dead place holder branch, do not update the radius
+    if (_bPlaceHolder) return;
+
     if (!_axillaryNode && !_terminalNode) {
         radius = 0.1f;
         return;

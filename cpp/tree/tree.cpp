@@ -73,6 +73,7 @@ void Tree::render(DrawingInfo& drawingInfo) {
         Node* current = (Node*) stack.pop();
 
         if (current == nullptr) continue;
+        if (current->_bPlaceHolder) continue;
 
         if (current->_axillaryNode) stack.push(current->_axillaryNode);
         if (current->_terminalNode) stack.push(current->_terminalNode);
@@ -196,6 +197,7 @@ void Tree::_addNodeToRender(Node* node, DrawingInfo& drawingInfo) {
 
 float Tree::_accumulateLight(Node* node) {
     if (node == nullptr) return 0.f;
+    if (node->_bPlaceHolder) return 0.f;
 
     node->_axillaryEnergy = 0.f;
     node->_terminalEnergy = 0.f;
@@ -206,7 +208,9 @@ float Tree::_accumulateLight(Node* node) {
         float energyPerNode = node->_terminalEnergy / (float) node->_terminalNode->_children;
 
         if (energyPerNode < _settings.PRUNE_RATIO) {
-            _deleteNode(node->_terminalNode);
+            node->_terminalNode->_bPlaceHolder = true;
+            _deleteNode(node->_terminalNode->_axillaryNode);
+            _deleteNode(node->_terminalNode->_terminalNode);
         }
     }
     if (node->_axillaryNode) {
@@ -215,7 +219,9 @@ float Tree::_accumulateLight(Node* node) {
         float energyPerNode = node->_axillaryEnergy / (float) node->_axillaryNode->_children;
 
         if (energyPerNode < _settings.PRUNE_RATIO) {
-            _deleteNode(node->_axillaryNode);
+            node->_axillaryNode->_bPlaceHolder = true;
+            _deleteNode(node->_axillaryNode->_axillaryNode);
+            _deleteNode(node->_axillaryNode->_terminalNode);
         }
     }
 
