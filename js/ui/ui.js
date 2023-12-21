@@ -1,4 +1,4 @@
-export function initUI(setCameraHeight) {
+export function initUI(setCameraPosition) {
     const treeSettings = {
         SHADOW_MAP_X: {},
         SHADOW_MAP_Y: {},
@@ -227,15 +227,18 @@ export function initUI(setCameraHeight) {
     const height = document.querySelector("#height");
 
     function heightUpdate() {
-        setCameraHeight(
-            parseFloat(height.value) * (
-                treeSettings.SHADOW_MAP_Z.value /
-                Math.min(
-                    Math.min(
-                        treeSettings.SHADOW_MAP_Z.value, 
-                        treeSettings.SHADOW_MAP_X.value
-                    ), 
-                        treeSettings.SHADOW_MAP_Y.value)));
+        const minSize = Math.min(
+            Math.min(
+                treeSettings.SHADOW_MAP_Z.value, 
+                treeSettings.SHADOW_MAP_X.value
+            ), 
+                treeSettings.SHADOW_MAP_Y.value);
+
+        setCameraPosition(
+            treeSettings.SHADOW_MAP_X.value * .5 / minSize,
+            treeSettings.SHADOW_MAP_Y.value * .5 / minSize,
+            parseFloat(height.value) * treeSettings.SHADOW_MAP_Z.value / minSize
+        );
     }
 
     height.oninput = heightUpdate;

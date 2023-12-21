@@ -89,7 +89,7 @@ export async function initApp(Module) {
         setCallbacks,
         getInitArguments, 
         getSettingsArguments
-    } = initUI((z) => {orbitController.setPosition(.5, .5, z)});
+    } = initUI((x, y, z) => {orbitController.setPosition(x, y, z);});
 
     function resetCallback() {
         const initArgs = getInitArguments();
