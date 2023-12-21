@@ -102,6 +102,9 @@ export async function initApp(Module) {
 
         WASM.initializeTree(initArgs);
 
+        document.querySelector("#height").oninput();
+        document.querySelector("#height").onchange();
+
         WASM.setSettings(getSettingsArguments());
     }
 

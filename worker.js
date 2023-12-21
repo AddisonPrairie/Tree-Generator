@@ -88,7 +88,7 @@ function getMesh() {
     const ptr = module.ccall("getTreeMesh");
     const numEdges = module.HEAP32[ptr / 4];
 
-    return module.HEAPF32.subarray(
+    return module.HEAPF32.slice(
         ptr / 4 + 1, ptr / 4 + 1 + numEdges * 12
     );
 }
