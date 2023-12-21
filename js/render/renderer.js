@@ -147,6 +147,14 @@ export class Renderer {
         }
     }
 
+    clearSetTransform(name) {
+        if (name in this.sets) {
+            this.sets[name].transform = glMatrix.mat4.create();
+        } else {
+            console.error("set does not exist");
+        }
+    }
+
     setSet(name, arr) {
         if (name in this.sets) {
             this.sets[name].vertices = arr.length / 6;

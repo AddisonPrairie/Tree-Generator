@@ -1,14 +1,12 @@
-
 #include <stdio.h>
 #include <cmath>
-#include <time.h>
 
 #include "render/drawinginfo.h"
 #include "tree/tree.h"
 
 /*
 compile with:
-    em++ cpp/main.cpp cpp/tree/tree.cpp cpp/vec/vec.cpp cpp/tree/node.cpp -o wasm.js -s EXPORTED_RUNTIME_METHODS=['ccall'] -s WASM=1 -s EXPORTED_FUNCTIONS=['_init','_getTreeMesh','_step','_setSettings'] -s ALLOW_MEMORY_GROWTH=1 -O3
+    em++ cpp/main.cpp cpp/tree/tree.cpp cpp/vec/vec.cpp cpp/tree/node.cpp -o wasm.js -s EXPORTED_RUNTIME_METHODS=['ccall'] -s WASM=1 -s EXPORTED_FUNCTIONS=['_init','_getTreeMesh','_step','_setSettings'] -s ALLOW_MEMORY_GROWTH=1 -O3 -sMODULARIZE=1
 */
 
 extern "C" {
@@ -18,17 +16,19 @@ extern "C" {
     int init(
         int SHADOW_MAP_SIZE_X,
         int SHADOW_MAP_SIZE_Y,
-        int SHADOW_MAP_SIZE_Z) {
-        printf("hello from cpp\n");
+        int SHADOW_MAP_SIZE_Z,
+        int SEED) {
 
         TreeSettings settings;
         settings.SHADOW_MAP_SIZE_X = SHADOW_MAP_SIZE_X;
         settings.SHADOW_MAP_SIZE_Y = SHADOW_MAP_SIZE_Y;
         settings.SHADOW_MAP_SIZE_Z = SHADOW_MAP_SIZE_Z;
 
+        if (tree) delete tree;
+
         tree = new Tree(settings);
 
-        srand(time(NULL));
+        srand(SEED);
 
         return 0;
     }

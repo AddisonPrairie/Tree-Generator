@@ -21,7 +21,7 @@ body {
 
 .panel {
     background-color: #222;
-    border-bottom-right-radius: 4px;
+    border-bottom-right-radius: 8px;
     padding: 3px 10px;
     width: 150px;
 
@@ -107,3 +107,81 @@ body {
     width: 50px;
     aspect-ratio: 1;
 }
+
+/* General styles for the slider */
+input[type='range'] {
+
+    -webkit-appearance: none; /* Removes default webkit styles */
+    appearance: none;
+    width: 100%; /* Specific width can be set if needed */
+    margin: 0px 0; /* Add margin to handle larger thumb */
+  }
+  
+  /* Style for the slider track */
+  input[type='range']::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 8px;
+    background: transparent; /* Changed to a dark grey color */
+    border-radius: 4px;
+    border: none; /* Remove any default border */
+  }
+  
+  /* Style for the slider thumb */
+  input[type='range']::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px; /* Square dimensions */
+    height: 16px;
+    background: #444; /* Neutral thumb color */
+    border-radius: 2px; /* Square corners */
+    position: relative; /* Ensure the thumb is positioned correctly */
+    top: 50%;
+    transform: translateY(-50%); /* Center vertically */
+    border: none; /* Remove any default border */
+  }
+  
+  /* Style for the slider thumb for Firefox */
+  input[type='range']::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    background: #444; /* Neutral thumb color */
+    border-radius: 2px; /* Square corners */
+    border: none;
+  }
+  
+  /* Style for the slider thumb for IE */
+  input[type='range']::-ms-thumb {
+    width: 16px;
+    height: 16px;
+    background: #444; /* Neutral thumb color */
+    border-radius: 2px; /* Square corners */
+    border: none;
+  }
+  
+  /* Styles for the track for Firefox */
+  input[type='range']::-moz-range-track {
+    background: transparent;
+    border-radius: 4px;
+    border: none;
+  }
+  
+  /* Styles for the track for IE */
+  input[type='range']::-ms-track {
+    background: transparent;
+    border-radius: 4px;
+    border: none;
+    /* You must specify a size for IE */
+    width: 100%;
+    height: 8px;
+  }
+  
+  input[type='range']::-ms-fill-lower {
+    background: transparent;
+  }
+  
+  input[type='range']::-ms-fill-upper {
+    background: transparent;
+  }
+  
+  
+  

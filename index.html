@@ -11,19 +11,19 @@
                 <div class="input-group">
                     <button id="step">start</button>
                 </div>
-                <div class="input-group">
-                    <label>mode</label>
-                    <button>continuous</button>
-                </div>
             </div>
             <div class="panel-section">
                 <h3>Camera Controls</h3>
-                <div class="input-group">
+                <div class="input-group" style="display: none; position: absolute;">
                     <label>distance</label>
                     <input type="number" value="0">
                 </div>
+                <div class="input-group">
+                    <label>height</label>
+                    <input id="height" type="range" value=".125" min="0" max="1" step=".0001">
+                </div>
             </div>
-            <div class="panel-section">
+            <!--<div class="panel-section">
                 <h3>Stats</h3>
                 <div class="input-group">
                     <label>nodes</label>
@@ -37,70 +37,83 @@
                 <div class="input-group">
                     <div class="stats-panel"></div>
                 </div>
-            </div>
+            </div>-->
             <div class="panel-section">
                 <h3>Tree Settings</h3>
                 <div class="input-group">
-                    <label>shadow_x</label>
-                    <input type="number" value="100" min="50" max="600" step="10">
+                    <label>map size:</label>
                 </div>
                 <div class="input-group">
-                    <label>shadow_y</label>
-                    <input type="number" value="100" min="50" max="600" step="10">
+                    <label>&nbsp;&nbsp;x</label>
+                    <input id="SHADOW_MAP_X" type="number" value="200" min="50" max="600" step="10" class="integer">
                 </div>
                 <div class="input-group">
-                    <label>shadow_z</label>
-                    <input type="number" value="100" min="50" max="600" step="10">
+                    <label>&nbsp;&nbsp;y</label>
+                    <input id="SHADOW_MAP_Y" type="number" value="200" min="50" max="600" step="10" class="integer">
                 </div>
                 <div class="input-group">
-                    <label>shadow_a</label>
-                    <input type="number" value="1.0" min=".01" max="10" step=".001">
+                    <label>&nbsp;&nbsp;z</label>
+                    <input id="SHADOW_MAP_Z" type="number" value="300" min="50" max="600" step="10" class="integer">
                 </div>
                 <div class="input-group">
-                    <label>shadow_b</label>
-                    <input type="number" value="1.4" min="1.0" max="4." step=".001">
+                    <label>shadow:</label>
                 </div>
                 <div class="input-group">
-                    <label>shadow_q</label>
-                    <input type="number" value="12" min="1" max="48" step="1">
+                    <label>&nbsp;&nbsp;strength</label>
+                    <input id="SHADOW_A" type="number" value=".5" min=".01" max="10" step=".001" class="minmax">
+                </div>
+                <div class="input-group">
+                    <label>&nbsp;&nbsp;decay</label>
+                    <input id="SHADOW_B" type="number" value="1.25" min="1.0" max="4." step=".001" class="minmax">
+                </div>
+                <div class="input-group">
+                    <label>&nbsp;&nbsp;distance</label>
+                    <input id="SHADOW_Q_MAX" type="number" value="5" min="1" max="48" step="1" class="integer">
+                </div>
+                <div class="input-group">
+                    <label>light</label>
+                    <input id="SHADOW_C" type="number" value="3" min="1.0" max="48.0" step=".001" class="minmax">
                 </div>
                 <div class="input-group">
                     <label>seed</label>
-                    <input type="text" value="0xfa19b2e3a">
+                    <input id="SEED" type="text" value="fa19b2e3a1c">
                 </div>
                 <div class="input-group">
-                    <button>reset tree</button>
+                    <button id="reset">reset tree</button>
                 </div>
             </div>
             <div class="panel-section">
                 <h3>Simulation Settings</h3>
                 <div class="input-group">
                     <label>tropism η</label>
-                    <input type="number" value="0.0" min="-10." max="10." step=".001">
+                    <input id="TROPISM_ETA" type="number" value="0.0" min="-10." max="10." step=".001" class="minmax">
                 </div>
                 <div class="input-group">
                     <label>light η</label>
-                    <input type="number" value="1.0" min="0.0" max="10." step=".001">
+                    <input id="LIGHT_ETA" type="number" value="7.0" min="0.0" max="10." step=".001" class="minmax">
                 </div>
                 <div class="input-group">
                     <label>tree η</label>
-                    <input type="number" value="10.0" min="1.0" max="10." step=".001">
+                    <input id="TREE_ETA" type="number" value="10.0" min="1.0" max="10." step=".001" class="minmax">
                 </div>
                 <div class="input-group">
                     <label>energy α</label>
-                    <input type="number" value="2.0" min=".5" max="10." step=".001">
+                    <input id="ENERGY_ALPHA" type="number" value="2.0" min=".5" max="10." step=".001" class="minmax">
                 </div>
                 <div class="input-group">
                     <label>energy λ</label>
-                    <input type="number" value=".54" min="0.0" max="10." step=".001">
+                    <input id="ENERGY_LAMBDA" type="number" value=".5" min="0.0" max="10." step=".001" class="minmax">
                 </div>
                 <div class="input-group">
                     <label>prune ratio</label>
-                    <input type="number" value=".45" min="0.0" max="2." step=".001">
+                    <input id="PRUNE_RATIO" type="number" value=".8" min="0.0" max="2." step=".001" class="minmax">
                 </div>
                 <div class="input-group">
                     <label>branch θ</label>
-                    <input type="number" value="1.0" min="-4.0" max="4.0" step=".001">
+                    <input id="BRANCHING_ANGLE_FACTOR" type="number" value="0.0" min="-4.0" max="4.0" step=".001" class="minmax">
+                </div>
+                <div class="input-group">
+                    <button id="update">update settings</button>
                 </div>
             </div>
         </div>
@@ -109,34 +122,12 @@
         <script src="js/glMatrix/gl-matrix-min.js"></script>
         <script src="js/render/renderer.js" type="module"></script>
         <script src="js/render/orbit.js" type="module"></script>
+        <script src="js/ui/ui.js" type="module"></script>
         <script src="js/main.js" type="module"></script>
         <script type="module">
             import { initApp } from "./js/main.js";
 
-            window.initApp = initApp;
+            window.onload = () => {initApp();};
         </script>
-        <script>
-            let bLoaded = false;
-
-            var Module = {
-                onRuntimeInitialized: function() {
-                    console.log("WASM module loaded");
-                    bLoaded = true;
-                }
-            };
-
-            document.addEventListener("DOMContentLoaded", function() {
-                function checkInit() {
-                    if (bLoaded) {
-                        window.initApp(Module);
-                    } else {
-                        setTimeout(checkInit, 10);
-                    }
-                }
-
-                checkInit();
-            });
-        </script>
-        <script src="wasm.js"></script>
     </body>
 </html>

@@ -89,6 +89,24 @@ void Tree::render(DrawingInfo& drawingInfo) {
         vec3f(64.f / 255.f)
     );
 
+    for (int i = 10; i < _settings.SHADOW_MAP_SIZE_X; i += 10) {
+        drawingInfo.addLine(
+            vec3f(i, 0.f, 0.f),
+            vec3f(64.f / 255.f),
+            vec3f(i, _settings.SHADOW_MAP_SIZE_Y, 0.f),
+            vec3f(64.f / 255.f)
+        );
+    }
+
+    for (int i = 0; i < _settings.SHADOW_MAP_SIZE_Y; i += 10) {
+        drawingInfo.addLine(
+            vec3f(0.f, i, 0.f),
+            vec3f(64.f / 255.f),
+            vec3f(_settings.SHADOW_MAP_SIZE_X, i, 0.f),
+            vec3f(64.f / 255.f)
+        );
+    }
+
     return;
     
     for (int x = 0; x < _settings.SHADOW_MAP_SIZE_X; x++) {
@@ -126,10 +144,10 @@ void Tree::_addNodeToRender(Node* node, DrawingInfo& drawingInfo) {
         drawingInfo.addLine(
             node->_preNode->_position,
             //vec3f(58.f / 255.f, 95.f / 255.f, 11.f / 255.f) * 2.f * c0,
-            vec3f(1.f),
+            vec3f(0.f),
             node->_position,
             //vec3f(58.f / 255.f, 95.f / 255.f, 11.f / 255.f) * 2.f * c1
-            vec3f(1.f)
+            vec3f(0.f)
         );
     }
     {
@@ -151,6 +169,8 @@ void Tree::_addNodeToRender(Node* node, DrawingInfo& drawingInfo) {
 
         float radius = node->radius;
 
+        if (radius < .2f) return;
+
         vec3f lastPos = node->_position + world(vec3f(cos(lastR) * radius, sin(lastR) * radius, 0.f), o1, o2, up);
 
         for (int i = 0; i < numPoints; i++) {
@@ -162,10 +182,10 @@ void Tree::_addNodeToRender(Node* node, DrawingInfo& drawingInfo) {
 
             drawingInfo.addLine(
                 lastPos, //vec3f(.5),
-                vec3f(1.),//
+                vec3f(.8f),//
                 //vec3f(150.f / 255.f, 75.f / 255.f, 0.f) * .5,
                 wPos, //vec3f(.5)
-                vec3f(1.)
+                vec3f(.8f)
                 //vec3f(150.f / 255.f, 75.f / 255.f, 0.f) * .5
             );
 
