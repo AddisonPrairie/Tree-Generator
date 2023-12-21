@@ -5,7 +5,6 @@ export function initUI(setCameraPosition) {
         SHADOW_MAP_Z: {},
         SHADOW_A    : {},
         SHADOW_B    : {},
-        SHADOW_C    : {},
         SHADOW_Q_MAX: {},
         SEED        : {},
         
@@ -19,6 +18,7 @@ export function initUI(setCameraPosition) {
         ENERGY_ALPHA : {},
         ENERGY_LAMBDA: {},
         PRUNE_RATIO  : {},
+        SHADOW_C     : {},
 
         BRANCHING_ANGLE_FACTOR: {},
 
@@ -207,7 +207,7 @@ export function initUI(setCameraPosition) {
             treeSettings.SHADOW_Q_MAX.value, 
             treeSettings.SHADOW_A.value, 
             treeSettings.SHADOW_B.value, 
-            treeSettings.SHADOW_C.value, 
+            simulationSettings.SHADOW_C.value, 
             simulationSettings.TROPISM_DIR_X.value, 
             simulationSettings.TROPISM_DIR_Y.value, 
             simulationSettings.TROPISM_DIR_Z.value,

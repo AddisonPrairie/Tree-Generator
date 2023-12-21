@@ -74,10 +74,6 @@
                     <input id="SHADOW_Q_MAX" type="number" value="8" min="1" max="48" step="1" class="integer">
                 </div>
                 <div class="input-group">
-                    <label class="tooltip"><span class="ttext">light</span><span class="tooltiptext">ambient light exposure at each point.</span></label>
-                    <input id="SHADOW_C" type="number" value="4" min="1.0" max="48.0" step=".001" class="minmax">
-                </div>
-                <div class="input-group">
                     <label>seed</label>
                     <input id="SEED" type="text" value="fa19b2e3a1c">
                 </div>
@@ -88,15 +84,22 @@
             <div class="panel-section">
                 <h3>Simulation Settings</h3>
                 <div class="input-group">
-                    <label class="tooltip"><span class="ttext">tropism η</span><span class="tooltiptext">weight of gravity in shoot direction. <br>0: no effect<br>&lt; 0: downward tendency<br>&gt; 0: upward tendency</span></label>
+                    <label class="tooltip"><span class="ttext">light</span><span class="tooltiptext">ambient light exposure at each point.</span></label>
+                    <input id="SHADOW_C" type="number" value="4" min="1.0" max="48.0" step=".001" class="minmax">
+                </div>
+                <div class="input-group">
+                    <label class="tooltip"><span class="ttext">shoot direction:</span><span class="tooltiptext" style="width: 96%;">weight of different factors when computing shoot direction.</span></label>
+                </div>
+                <div class="input-group">
+                    <label class="tooltip">&nbsp;&nbsp;<span class="ttext">tropism η</span><span class="tooltiptext">weight of gravity in shoot direction. <br>0: no effect<br>&lt; 0: downward tendency<br>&gt; 0: upward tendency</span></label>
                     <input id="TROPISM_ETA" type="number" value="0.0" min="-10." max="10." step=".001" class="minmax">
                 </div>
                 <div class="input-group">
-                    <label class="tooltip"><span class="ttext">light η</span><span class="tooltiptext">weight of light in shoot direction. Higher values cause the tree to seek out light more.</span></label>
+                    <label class="tooltip">&nbsp;&nbsp;<span class="ttext">light η</span><span class="tooltiptext">weight of light in shoot direction. Higher values cause the tree to seek out light more.</span></label>
                     <input id="LIGHT_ETA" type="number" value="1.0" min="0.0" max="10." step=".001" class="minmax">
                 </div>
                 <div class="input-group">
-                    <label class="tooltip"><span class="ttext">tree η</span><span class="tooltiptext">weight of the tree's genetics in shoot direction. Higher values make the tree look more organized and self similar.</span></label>
+                    <label class="tooltip">&nbsp;&nbsp;<span class="ttext">tree η</span><span class="tooltiptext">weight of the tree's genetics in shoot direction. Higher values make the tree look more organized and self similar.</span></label>
                     <input id="TREE_ETA" type="number" value="10.0" min="1.0" max="10." step=".001" class="minmax">
                 </div>
                 <div class="input-group">
