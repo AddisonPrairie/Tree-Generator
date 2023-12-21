@@ -35,6 +35,8 @@ export async function initApp(Module) {
                 WASM.worker.onmessage = () => {
                     resolve();
 
+                    console.warn("wasm initialized...");
+
                     WASM.worker.onmessage = (e) => {
                         if (e.data.type === "MESH") {
                             WASM.bMeshNeedsUpdate = false;
