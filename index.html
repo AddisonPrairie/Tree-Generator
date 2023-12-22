@@ -48,15 +48,15 @@
                 </div>
                 <div class="input-group">
                     <label>&nbsp;&nbsp;x</label>
-                    <input id="SHADOW_MAP_X" type="number" value="200" min="50" max="800" step="10" class="integer">
+                    <input id="SHADOW_MAP_X" type="number" value="300" min="50" max="800" step="10" class="integer">
                 </div>
                 <div class="input-group">
                     <label>&nbsp;&nbsp;y</label>
-                    <input id="SHADOW_MAP_Y" type="number" value="200" min="50" max="800" step="10" class="integer">
+                    <input id="SHADOW_MAP_Y" type="number" value="300" min="50" max="800" step="10" class="integer">
                 </div>
                 <div class="input-group">
                     <label>&nbsp;&nbsp;z</label>
-                    <input id="SHADOW_MAP_Z" type="number" value="600" min="50" max="800" step="10" class="integer">
+                    <input id="SHADOW_MAP_Z" type="number" value="450" min="50" max="800" step="10" class="integer">
                 </div>
                 <div class="input-group">
                     <label>shadow:</label>
@@ -67,15 +67,15 @@
                 </div>
                 <div class="input-group">
                     <label class="tooltip">&nbsp;&nbsp;<span class="ttext">decay</span><span class="tooltiptext">ratio the shadow decreases as the distance from a node increases.</span></label>
-                    <input id="SHADOW_B" type="number" value="1.2" min="1.0" max="4." step=".001" class="minmax">
+                    <input id="SHADOW_B" type="number" value="1.25" min="1.0" max="4." step=".001" class="minmax">
                 </div>
                 <div class="input-group">
                     <label class="tooltip">&nbsp;&nbsp;<span class="ttext">distance</span><span class="tooltiptext">the maximum distance a node's shadow will reach vertically downward. Higher values are more realistic but take longer to compute.</span></label>
-                    <input id="SHADOW_Q_MAX" type="number" value="8" min="1" max="48" step="1" class="integer">
+                    <input id="SHADOW_Q_MAX" type="number" value="16" min="1" max="48" step="1" class="integer">
                 </div>
                 <div class="input-group">
                     <label>seed</label>
-                    <input id="SEED" type="text" value="fa19b2e3a1c">
+                    <input id="SEED" type="text" value="4ec3e00e7b">
                 </div>
                 <div class="input-group">
                     <button id="reset">reset tree</button>
@@ -84,23 +84,23 @@
             <div class="panel-section">
                 <h3>Simulation Settings</h3>
                 <div class="input-group">
-                    <label class="tooltip"><span class="ttext">light</span><span class="tooltiptext">ambient light exposure at each point.</span></label>
-                    <input id="SHADOW_C" type="number" value="4" min="1.0" max="48.0" step=".001" class="minmax">
-                </div>
-                <div class="input-group">
                     <label class="tooltip"><span class="ttext">shoot direction:</span><span class="tooltiptext" style="width: 96%;">weight of different factors when computing shoot direction.</span></label>
                 </div>
                 <div class="input-group">
                     <label class="tooltip">&nbsp;&nbsp;<span class="ttext">tropism η</span><span class="tooltiptext">weight of gravity in shoot direction. <br>0: no effect<br>&lt; 0: downward tendency<br>&gt; 0: upward tendency</span></label>
-                    <input id="TROPISM_ETA" type="number" value="0.0" min="-10." max="10." step=".001" class="minmax">
+                    <input id="TROPISM_ETA" type="number" value="0.2" min="-10." max="10." step=".001" class="minmax">
                 </div>
                 <div class="input-group">
                     <label class="tooltip">&nbsp;&nbsp;<span class="ttext">light η</span><span class="tooltiptext">weight of light in shoot direction. Higher values cause the tree to seek out light more.</span></label>
-                    <input id="LIGHT_ETA" type="number" value="1.0" min="0.0" max="10." step=".001" class="minmax">
+                    <input id="LIGHT_ETA" type="number" value="2.0" min="0.0" max="10." step=".001" class="minmax">
                 </div>
                 <div class="input-group">
                     <label class="tooltip">&nbsp;&nbsp;<span class="ttext">tree η</span><span class="tooltiptext">weight of the tree's genetics in shoot direction. Higher values make the tree look more organized and self similar.</span></label>
                     <input id="TREE_ETA" type="number" value="10.0" min="1.0" max="10." step=".001" class="minmax">
+                </div>
+                <div class="input-group">
+                    <label class="tooltip"><span class="ttext">light</span><span class="tooltiptext">ambient light exposure at each point.</span></label>
+                    <input id="SHADOW_C" type="number" value="5" min="1.0" max="48.0" step=".001" class="minmax">
                 </div>
                 <div class="input-group">
                     <label class="tooltip"><span class="ttext">energy α</span><span class="tooltiptext">energy multiplier at base of tree. Higher values give tree more energy.</span></label>
@@ -112,7 +112,7 @@
                 </div>
                 <div class="input-group">
                     <label class="tooltip"><span class="ttext">prune ratio</span><span class="tooltiptext">ratio<br>(ENERGY/NUM_CHILDREN)<br>at which branches are pruned. Higher values cause trees to drop branches more often.</span></label>
-                    <input id="PRUNE_RATIO" type="number" value=".6" min="0.0" max="2." step=".001" class="minmax">
+                    <input id="PRUNE_RATIO" type="number" value=".7" min="0.0" max="2." step=".001" class="minmax">
                 </div>
                 <div class="input-group">
                     <label class="tooltip"><span class="ttext">branch θ</span><span class="tooltiptext">direction a lateral branch will grow:<br>0: perpendicular to main axis<br>&gt; 0: towards main axis</span></label>
