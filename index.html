@@ -48,15 +48,15 @@
                 </div>
                 <div class="input-group">
                     <label>&nbsp;&nbsp;x</label>
-                    <input id="SHADOW_MAP_X" type="number" value="300" min="50" max="800" step="10" class="integer">
+                    <input id="SHADOW_MAP_X" type="number" value="400" min="50" max="800" step="10" class="integer">
                 </div>
                 <div class="input-group">
                     <label>&nbsp;&nbsp;y</label>
-                    <input id="SHADOW_MAP_Y" type="number" value="300" min="50" max="800" step="10" class="integer">
+                    <input id="SHADOW_MAP_Y" type="number" value="400" min="50" max="800" step="10" class="integer">
                 </div>
                 <div class="input-group">
                     <label>&nbsp;&nbsp;z</label>
-                    <input id="SHADOW_MAP_Z" type="number" value="450" min="50" max="800" step="10" class="integer">
+                    <input id="SHADOW_MAP_Z" type="number" value="600" min="50" max="800" step="10" class="integer">
                 </div>
                 <div class="input-group">
                     <label>shadow:</label>
@@ -67,7 +67,7 @@
                 </div>
                 <div class="input-group">
                     <label class="tooltip">&nbsp;&nbsp;<span class="ttext">decay</span><span class="tooltiptext">ratio the shadow decreases as the distance from a node increases.</span></label>
-                    <input id="SHADOW_B" type="number" value="1.25" min="1.0" max="4." step=".001" class="minmax">
+                    <input id="SHADOW_B" type="number" value="1.1" min="1.0" max="4." step=".001" class="minmax">
                 </div>
                 <div class="input-group">
                     <label class="tooltip">&nbsp;&nbsp;<span class="ttext">distance</span><span class="tooltiptext">the maximum distance a node's shadow will reach vertically downward. Higher values are more realistic but take longer to compute.</span></label>
@@ -88,11 +88,11 @@
                 </div>
                 <div class="input-group">
                     <label class="tooltip">&nbsp;&nbsp;<span class="ttext">tropism η</span><span class="tooltiptext">weight of gravity in shoot direction. <br>0: no effect<br>&lt; 0: downward tendency<br>&gt; 0: upward tendency</span></label>
-                    <input id="TROPISM_ETA" type="number" value="0.2" min="-10." max="10." step=".001" class="minmax">
+                    <input id="TROPISM_ETA" type="number" value="0.0" min="-10." max="10." step=".001" class="minmax">
                 </div>
                 <div class="input-group">
                     <label class="tooltip">&nbsp;&nbsp;<span class="ttext">light η</span><span class="tooltiptext">weight of light in shoot direction. Higher values cause the tree to seek out light more.</span></label>
-                    <input id="LIGHT_ETA" type="number" value="1.0" min="0.0" max="10." step=".001" class="minmax">
+                    <input id="LIGHT_ETA" type="number" value="3.0" min="0.0" max="10." step=".001" class="minmax">
                 </div>
                 <div class="input-group">
                     <label class="tooltip">&nbsp;&nbsp;<span class="ttext">tree η</span><span class="tooltiptext">weight of the tree's genetics in shoot direction. Higher values make the tree look more organized and self similar.</span></label>
@@ -108,15 +108,15 @@
                 </div>
                 <div class="input-group">
                     <label class="tooltip"><span class="ttext">energy λ</span><span class="tooltiptext">how energy is split at branches.<br>.5: balanced<br>&lt; .5: bias towards lateral branch<br>&gt; .5: bias towards main branch</span></label>
-                    <input id="ENERGY_LAMBDA" type="number" value=".54" min="0.0" max="10." step=".001" class="minmax">
+                    <input id="ENERGY_LAMBDA" type="number" value=".52" min="0.0" max="10." step=".001" class="minmax">
                 </div>
                 <div class="input-group">
                     <label class="tooltip"><span class="ttext">prune ratio</span><span class="tooltiptext">ratio<br>(ENERGY/NUM_CHILDREN)<br>at which branches are pruned. Higher values cause trees to drop branches more often.</span></label>
-                    <input id="PRUNE_RATIO" type="number" value=".7" min="0.0" max="2." step=".001" class="minmax">
+                    <input id="PRUNE_RATIO" type="number" value=".45" min="0.0" max="2." step=".001" class="minmax">
                 </div>
                 <div class="input-group">
                     <label class="tooltip"><span class="ttext">branch θ</span><span class="tooltiptext">direction a lateral branch will grow:<br>0: perpendicular to main axis<br>&gt; 0: towards main axis</span></label>
-                    <input id="BRANCHING_ANGLE_FACTOR" type="number" value="0.8" min="-4.0" max="4.0" step=".001" class="minmax">
+                    <input id="BRANCHING_ANGLE_FACTOR" type="number" value="1" min="-4.0" max="4.0" step=".001" class="minmax">
                 </div>
                 <div class="input-group">
                     <button id="update">update settings</button>
